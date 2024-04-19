@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.collect
 
 class CrimeListFragment : Fragment() {
 
-
     private var _binding: FragmentCrimeListBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -29,7 +28,12 @@ class CrimeListFragment : Fragment() {
         }
 
     private val crimeListViewModel: CrimeListViewModel by viewModels()
+    //  private var job: Job? = null
 
+    /*override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "Total crimes: ${crimeListViewModel.crimes.size}")
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,27 +44,44 @@ class CrimeListFragment : Fragment() {
 
         binding.crimeRecyclerView.layoutManager = LinearLayoutManager(context)
 
-
+        /*  val crimes = crimeListViewModel.crimes
+          val adapter = CrimeListAdapter(crimes)
+          binding.crimeRecyclerView.adapter = adapter*/
 
         return binding.root
-
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    /* override fun onStart(){
+         super.onStart()
+
+         job = viewLifecycleOwner.lifecycleScope.launch{
+             val crimes = crimeListViewModel.loadCrimes()
+             binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes)
+         }
+
+     }*/
+
+    /*  override fun onStop() {
+          super.onStop()
+          job?.cancel()
+
+      }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                //val crimes = crimeListViewModel.loadCrimes()
                 crimeListViewModel.crimes.collect { crimes ->
                     binding.crimeRecyclerView.adapter =
-                        CrimeHolder.CrimeListAdapter(crimes)
+                        CrimeListAdapter(crimes)
                 }
             }
         }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
