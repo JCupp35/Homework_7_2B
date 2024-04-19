@@ -1,11 +1,13 @@
 package com.cupp.msu.criminalintentchapter9a
 
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.cupp.msu.criminalintentchapter9a.databinding.ListItemCrimeBinding
+
 
 class CrimeHolder (
     val binding: ListItemCrimeBinding
@@ -15,7 +17,10 @@ class CrimeHolder (
 fun bind(crime:Crime){
 
     binding.crimeTitle.text = crime.title
-    binding.crimeDate.text = crime.date.toString()
+    // binding.crimeDate.text = crime.date.toString()
+    val formattedDate = DateFormat.format("MMM dd, yyyy", crime.date)
+
+    binding.crimeDate.text = formattedDate
 
 
     binding.root.setOnClickListener{

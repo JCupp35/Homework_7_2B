@@ -7,11 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cupp.msu.criminalintentchapter9a.databinding.FragmentCrimeListBinding
+import kotlinx.coroutines.Job
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 
 
-private const val TAG = "CrimeListFragment"
+
 
 class CrimeListFragment : Fragment() {
 
@@ -22,28 +28,21 @@ class CrimeListFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-  private val crimeListViewModel :CrimeListViewModel by viewModels()
+    private val crimeListViewModel: CrimeListViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "total Crimes : ${crimeListViewModel.crimes.size}")
 
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentCrimeListBinding.inflate(inflater, container, false)
 
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-           _binding = FragmentCrimeListBinding.inflate(inflater, container, false)
+        binding.crimeRecyclerView.layoutManager = LinearLayoutManager(context)
 
-            binding.crimeRecyclerView.layoutManager = LinearLayoutManager(context)
 
-            val crimes = crimeListViewModel.crimes
-            val adapter = CrimeHolder.CrimeListAdapter(crimes)
-            binding.crimeRecyclerView.adapter = adapter
 
-            return binding.root
+        return binding.root
 
     }
 
@@ -52,4 +51,16 @@ class CrimeListFragment : Fragment() {
         _binding = null
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                crimeListViewModel.crimes.collect { crimes ->
+                    binding.crimeRecyclerView.adapter =
+                        CrimeHolder.CrimeListAdapter(crimes)
+                }
+            }
+        }
+    }
 }
