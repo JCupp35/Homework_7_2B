@@ -2,6 +2,7 @@ package com.cupp.msu.criminalintentchapter9a.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.cupp.msu.criminalintentchapter9a.Crime
 
@@ -9,5 +10,6 @@ import com.cupp.msu.criminalintentchapter9a.Crime
 @TypeConverters(CrimeTypeConverters::class)
 abstract class CrimeDatabase: RoomDatabase() {
     abstract fun crimeDAO(): CrimeDao
+
 
 }
