@@ -5,12 +5,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import kotlinx.coroutines.flow.collect
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.cupp.msu.criminalintentchapter9a.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
@@ -35,6 +39,7 @@ class CrimeDetailFragment :Fragment(){
             "Cannot access binding because it is null. Is the view visisble"
 
         }
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     /*  override fun onCreate(savedInstanceState: Bundle?) {
           super.onCreate(savedInstanceState)
@@ -49,6 +54,24 @@ class CrimeDetailFragment :Fragment(){
           )
           Log.d(TAG, "The crime ID is: ${args.crimeId}")
       }*/
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val crimeTitle = binding.crimeTitle.text.toString()
+                if (crimeTitle.isBlank()) {
+                    Toast.makeText(requireContext(), "Please provide a description of the crime", Toast.LENGTH_SHORT).show()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
+
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
