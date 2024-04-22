@@ -13,6 +13,7 @@ import com.cupp.msu.criminalintentchapter9a.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.Job
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 
@@ -75,7 +76,12 @@ class CrimeListFragment : Fragment() {
                 //val crimes = crimeListViewModel.loadCrimes()
                 crimeListViewModel.crimes.collect { crimes ->
                     binding.crimeRecyclerView.adapter =
-                        CrimeListAdapter(crimes)
+                        CrimeListAdapter(crimes){ crimeId->
+                          findNavController().navigate(
+                             // R.id.show_crime_detail
+                              CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                          )
+                        }
                 }
             }
         }
